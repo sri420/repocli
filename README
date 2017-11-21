@@ -2,3 +2,76 @@ java -cp uber-repoclient-0.0.1-SNAPSHOT.jar repoclient.MyMain <<REPO_NAME>>
 
 Where REPO_NAME ==> Name of the New Rep to Be Created
 
+	/*	
+		
+		/*
+		 * Inputs required for the Program
+		 * ===============================
+		 * For Maven Project Creation from archetype
+		 * -----------------------------------------
+		 * -groupId
+		 * -artifactId
+		 * -package
+		 * -version
+		 * -description
+		 * 
+		 * For Remote Bitbucket Reository Creation
+		 * ---------------------------------------
+		 * repository name ( 
+		 * 	Ideally we can resuse artifactId  without prompting the user ,
+		 *  Alternatively,  we can default to artifactId and have user override it if required )
+		 * 
+		 * 
+		 * For Bitbucket authentication
+		 * ----------------------------
+		 * -username
+		 * -password
+		 * 
+		 * This is only required for first time. After successful authentication,
+		 * the username and base64 encoded password would be stored in the user's home directory.
+		 * On subsequent runs, the values would be fetched from there and authenticated with bitbucket accordingly.
+		 * 
+		 * If authentication fails on subsequent runs, due to one or more reasons as below
+		 * 	--Credentials have expired/unknown credentials
+		 *  --Config file stored in user's home directory is not accessible / missing or
+		 *  --Config File exists but username and/or password vales are either null or empty
+		 *  --Some other unknown reason
+		 *  
+		 *  In those scenarios, the solution is  Renew the config credentials by,
+		 *  -- Prompt the user for username and password and 
+		 *  -- Authenticate with  bitbucket and 
+		 *  -- On successful authentication write it to the config file accordingly.
+		 *  
+		 *   Creating Project from Maven Archetype
+		 *   =====================================
+		 *    mvn archetype:generate -DinteractiveMode=false^
+		 *		-DarchetypeGroupId=com.anthem.bp.support^
+		 *		-DarchetypeArtifactId=bp-service-archetype^
+		 *		-DarchetypeVersion=0.0.7-SNAPSHOT^
+		 *		-DgroupId=<<GroupId>>^
+		 *		-DartifactId=<<ArtifactId>>^
+		 *		-Dversion=<<Version>>^
+		 *		-Ddescription="<<Description>>"
+		 * 
+		 *  Git Repository Specific Commands
+		 *  ================================
+		 *   git init
+		 *   git add .
+		 *	 git commit - m <<message>>
+		 *
+		 *   git remote add origin  http://<<host:Port>>/scm/home/<<artifactId>>.git
+		 *   git checkout -B integration
+		 *   git push -u origin integration";
+		 */
+
+
+		/*System.out.println();
+		System.out.println();
+		System.out.println("***Received the below parameters***");
+		System.out.println("******GroupId:" + strGroupId);
+		System.out.println("***ArtifactId:" + strArtifactId);
+		System.out.println("**PackageName:" + strPackageName);
+		System.out.println("**Description:" + strDescription);
+		System.out.println("******Version:" + strVersion);
+		System.out.println();
+		System.out.println();*/
