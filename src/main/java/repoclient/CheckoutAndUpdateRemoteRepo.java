@@ -6,8 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Month;
 
 import org.apache.commons.io.FileUtils;
+import org.beryx.textio.TextIO;
+import org.beryx.textio.TextIoFactory;
+import org.beryx.textio.TextTerminal;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.AbortedByHookException;
@@ -35,8 +39,8 @@ public class CheckoutAndUpdateRemoteRepo {
 		String repoUrl = "https://github.com/sri420/repocli";
 		String branchToClone = "master";
 		String username = "sri420";
-		String password = "Kajol143$";
-
+		String password = "";
+		
 		new CheckoutAndUpdateRemoteRepo().doTask(repoUrl, gitRepo, branchToClone, username, password);
 	}
 
