@@ -1,4 +1,4 @@
-package repoclient;
+package com.demo.cli;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -42,12 +42,12 @@ public class ProjectCreator {
 			//System.out.println();
 			//System.out.println(mvnFormattedString);
 			Process finalProcess = Runtime.getRuntime().exec("cmd.exe /c  " + mvnFormattedString);
-			//BufferedReader stdInputfinalProcess = new BufferedReader(new InputStreamReader(finalProcess.getInputStream()));
+			BufferedReader stdInputfinalProcess = new BufferedReader(new InputStreamReader(finalProcess.getInputStream()));
 			BufferedReader stdErrorfinalProcess = new BufferedReader(new InputStreamReader(finalProcess.getErrorStream()));
 			System.out.println();
 			System.out.println();
 			System.out.println("Project Being Created in folder:" + System.getProperty("user.dir") + File.separator + strArtifactId );
-			//displayInput(stdInputfinalProcess, "Error");
+			displayInput(stdInputfinalProcess, "Input");
 			displayInput(stdErrorfinalProcess, "Error");
 		} catch (IOException e) {
 			System.out.println("Error Occured:" + e);

@@ -1,4 +1,4 @@
-package repoclient;
+package com.demo.cli;
 
 import java.io.IOException;
 

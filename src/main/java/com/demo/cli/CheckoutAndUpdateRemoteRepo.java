@@ -1,4 +1,4 @@
-package repoclient;
+package com.demo.cli;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,12 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.Month;
 
 import org.apache.commons.io.FileUtils;
-import org.beryx.textio.TextIO;
-import org.beryx.textio.TextIoFactory;
-import org.beryx.textio.TextTerminal;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.errors.AbortedByHookException;
@@ -32,23 +28,26 @@ public class CheckoutAndUpdateRemoteRepo {
 	public static final String TEMP_FOLDER = "temp";
 	public static final String TEMP_FOLDER_PATH = System.getProperty("user.home") + File.separator + TEMP_FOLDER;
 	public static final String MESSAGE = "Updated Config File on New Service Creation";
+	public static final String ZUUL_FOLDER="zuul";
 
 	public static void main(String[] args) {
 
-		String gitRepo = "repocli";
-		String repoUrl = "https://github.com/sri420/repocli";
-		String branchToClone = "master";
-		String username = "sri420";
-		String password = "";
+		String gitRepo = "config-repo";
+		//String repoUrl = "http://bsridhar@localhost:7990/scm/home/config-repo.git";//"https://github.com/sri420/repocli";
+		String branchToClone = "integration";
+		String username = "bsridhar";
+		String password = "Kajol143$";
+		String protocol=ConfigFileManager.getConfiguration().getProperty("protocol");
+		String hostPort=ConfigFileManager.getConfiguration().getProperty("hostPort");
 		
-		new CheckoutAndUpdateRemoteRepo().doTask(repoUrl, gitRepo, branchToClone, username, password);
+		CheckoutAndUpdateRemoteRepo.doTask(protocol,hostPort,gitRepo, branchToClone, username, password);
 	}
 
-	public void doTask(String repoUrl, String repoFolderName, String branchToClone, String username, String password) {
-		cloneRepo(repoUrl, repoFolderName, branchToClone);
-		updateLocalRepoFolder(repoFolderName);
-		stageAndCommitLocalRepo(repoFolderName);
-		pushLocalToRemoteRepo(repoFolderName, username, password);
+	public static void doTask(String protocol,String hostPort, String repoName, String branchToClone, String username, String password) {
+		cloneRepo(protocol,username,password,hostPort ,repoName, branchToClone);
+		updateLocalRepoFolder(repoName);
+		stageAndCommitLocalRepo(repoName);
+		pushLocalToRemoteRepo(repoName, username, password);
 		deleteTempFolder();
 	}
 
@@ -58,12 +57,12 @@ public class CheckoutAndUpdateRemoteRepo {
 		FileWriter fileWriter;
 		try {
 			String folder_path = TEMP_FOLDER_PATH + File.separator + repoFolderName;
-			input = new FileInputStream(new File(folder_path + File.separator + "wtf_shaithan.yml"));
+			input = new FileInputStream(new File(folder_path + File.separator +  ZUUL_FOLDER + File.separator + "application.yml"));
 			Yaml yaml1 = new Yaml();
 			Object data = yaml1.load(input);
 			input.close();
 
-			fileWriter = new FileWriter(new File(folder_path + File.separator + "wtf_kajol.yml"));
+			fileWriter = new FileWriter(new File(folder_path + File.separator + ZUUL_FOLDER + File.separator + "application-new2.yml"));
 			DumperOptions options = new DumperOptions();
 			options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 			options.setPrettyFlow(true);
@@ -82,6 +81,10 @@ public class CheckoutAndUpdateRemoteRepo {
 	private static void stageAndCommitLocalRepo(String repoFolderName) {
 		Git git;
 		try {
+			/*System.out.println("************stageAndCommitLocalRepo PARAMETERS***********");
+			System.out.println();
+			System.out.println();
+			System.out.println("*repoName:" + repoFolderName);*/
 			git = Git.open(new File(TEMP_FOLDER_PATH + File.separator + repoFolderName));
 			git.add().addFilepattern(".").call();
 
@@ -110,6 +113,11 @@ public class CheckoutAndUpdateRemoteRepo {
 	private static void pushLocalToRemoteRepo(String repoFolderName, String username, String password) {
 		Git git;
 		try {
+		/*	System.out.println("************pushLocalToRemoteRepo PARAMETERS***********");
+			System.out.println();
+			System.out.println();
+			System.out.println("*username:" + username);
+			System.out.println("*repoName:" + repoFolderName);*/
 			git = Git.open(new File(TEMP_FOLDER_PATH + File.separator + repoFolderName));
 			PushCommand pushCommand = git.push();
 			pushCommand.setRemote("origin");
@@ -137,10 +145,24 @@ public class CheckoutAndUpdateRemoteRepo {
 
 	}
 
-	public static void cloneRepo(String url, String targetDir, String branch) {
+	public static void cloneRepo(String protocol,String username,String password,String hostPort,String repoName, String branch) {
 		try {
+			
+		/*	System.out.println("************cloneRepo PARAMETERS***********");
+			System.out.println();
+			System.out.println();
+			System.out.println("*protocol:" + protocol);
+			System.out.println("*hostPort:" + hostPort);
+			System.out.println("*repoName:" + repoName);
+			System.out.println("*branch:" + branch);*/
+			//"http://bsridhar@localhost:7990/scm/home/9thproject.git";
+			
+		
+			String url=protocol + username +"@" + hostPort + ConfigFileManager.getConfiguration().getProperty("bitbucketServerPushContextPath") +repoName + ".git";
+			//System.out.println("Constructed Url is:" + url);
 			Git git = Git.cloneRepository().setURI(url)
-					.setDirectory(new File(TEMP_FOLDER_PATH + File.separator + targetDir)).setBranch(branch).call();
+						.setCredentialsProvider(new UsernamePasswordCredentialsProvider(username, password))
+					.setDirectory(new File(TEMP_FOLDER_PATH + File.separator + repoName)).setBranch(branch).call();
 			git.close();
 		} catch (GitAPIException e) {
 			e.printStackTrace();
